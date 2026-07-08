@@ -1,33 +1,20 @@
-name: Deploy App
+name: React Native CI
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '18'
-
       - name: Install dependencies
         run: npm install
-
-      - name: Run tests
-        run: npm test
-
-      - name: Build project
-        run: npm run build
-
-      - name: Deploy to server
-        run: |
-          echo "Deploying..."
-          # Example: scp build files to your server
-          scp -r ./build user@yourserver:/var/www/app
+      - name: Run Jest tests
+        run: npx jest --ci
+      - name: Expo build (Android)
+        run: npx eas build -p android --non-interactive
